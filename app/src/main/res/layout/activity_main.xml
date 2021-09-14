@@ -7,7 +7,7 @@
     tools:context=".Menu">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/menulogo"
         android:layout_width="337dp"
         android:layout_height="328dp"
         android:src="@drawable/menulogo"
@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.21" />
+        app:layout_constraintVertical_bias="0.21"
+        />
 
     <Button
         android:id="@+id/playBtn"
@@ -43,7 +44,8 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.723" />
+        app:layout_constraintVertical_bias="0.723"
+        android:elevation="-2dp"/>
 
     <TextView
         android:id="@+id/version"
@@ -52,9 +54,38 @@
         android:text="Version 1.0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintHorizontal_bias="0.035"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.991" />
+
+    <ImageView
+        android:id="@+id/rulesDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282"
+        app:srcCompat="@drawable/rules" />
+
+    <Button
+        android:id="@+id/dialogBtn"
+        android:layout_width="100dp"
+        android:layout_height="43dp"
+        android:elevation="20dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="ok"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.776" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
