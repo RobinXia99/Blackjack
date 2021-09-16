@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 
 class Menu : AppCompatActivity() {
 
