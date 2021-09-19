@@ -1,31 +1,62 @@
 package com.example.projectblackjack
 
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 
-open class Deck (numOfCards: Int) {
-
-    /*init {
+open class Deck(deckNum: Int) : Cards() {
 
 
-        val DeckOfCards = mutableListOf<Cards>()
 
-        for (a in 1..numOfCards) {
-            for (b in Cards.cardVal) {
-                for (c in Cards.cardIMG) {
-                    DeckOfCards.add(Cards(b, c))
+
+
+      /*  val DeckOfCards = mutableListOf<Cards>()
+
+
+       fun dealCards(round: Int) {
+
+
+            var value = 2
+            var cardIndex = 1
+
+
+            for (img in cardIMG) {
+                DeckOfCards.add(Cards(value, img))
+                if (value < 10) {
+                    value++
+
+                } else if (cardIndex == 12 || cardIndex == 25 || cardIndex == 38
+                    || cardIndex == 51
+                ) {
+                    value++
+
+                } else if (cardIndex == 13 || cardIndex == 26 || cardIndex == 39 || cardIndex == 52) {
+                    value = 2
                 }
+                cardIndex++
+
             }
-        }
+            for (i in 0..51) {
 
-    }
+                /*Log.d("Cards", "${DeckOfCards[i].cardValue}  ${DeckOfCards[i].cardImage}")
+                //2,3,4,5,6,7,8,9,10,10,10,10,11 - 2,3,4,5,6,7,8,9,10,10,10,10,11 value loop
+                //1,2,3,4,5,6,7,8,9,10,11,12,13 - 14,15,16,17,18,19,20,21,22,23,24,25 card index*/
+            }
 
-     */
+
+            DeckOfCards.shuffle()
+
+        }*/
+
+
+
 }
 
-    class Cards(var cardValue: Int = 0, var cardImage: Int = 0) {
+    open class Cards(var cardValue: Int = 0, var cardImage: Int = 0) {
 
         companion object {
-            var cardVal = arrayOf(2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11)
             var cardIMG = arrayOf(
                 R.drawable.spades_2,
                 R.drawable.spades_3,
@@ -83,3 +114,4 @@ open class Deck (numOfCards: Int) {
         }
 
     }
+
