@@ -40,7 +40,7 @@ class BettingFragment : Fragment() {
 
         var everyOtherClick = 2
 
-
+        //
         fun AddBet () {
             val gameActivity = activity as Game
             if((gameActivity.purse.balance >= 0)
