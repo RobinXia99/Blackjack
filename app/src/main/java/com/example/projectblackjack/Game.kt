@@ -1,5 +1,6 @@
 package com.example.projectblackjack
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import java.util.Collections.shuffle
 
 class Game : AppCompatActivity() {
@@ -28,6 +30,11 @@ class Game : AppCompatActivity() {
     private lateinit var prompt: TextView
     var round = 1 // Round is every iteration of the game starting from startgame
     var turn = 1 // turn is everytime I get the option hit or stand
+    var betAmount = 0
+    var purse = Balance(1000)
+    lateinit var playAgain: Button
+    lateinit var betFragment: Button
+
 
     override fun onStart() {
         super.onStart()
@@ -49,12 +56,10 @@ class Game : AppCompatActivity() {
         val roundCount = findViewById<TextView>(R.id.roundView)
         val hitBtn = findViewById<Button>(R.id.hitBtn)
         val standBtn = findViewById<Button>(R.id.standBtn)
-        val playAgain = findViewById<Button>(R.id.nextroundBtn)
+        playAgain = findViewById(R.id.nextroundBtn)
+        betFragment = findViewById(R.id.betFragment)
         val dealerhand = theDealer(0)
         val playerhand = MyHand(0)
-        var stand: Boolean
-        var hit: Boolean
-        var bust = false
 
         val dealerCards = arrayOf(dealercard2, dealercard3, dealercard4, dealercard5)
         val playerCards = arrayOf(myCard3, myCard4, myCard5)
@@ -109,20 +114,20 @@ class Game : AppCompatActivity() {
             Handler(Looper.getMainLooper()).postDelayed(
                 {
                     prompt.text = " "
-                    playAgain.setVisibility(View.VISIBLE)
+                    playAgain.visibility = View.VISIBLE
+                    betFragment.visibility = View.VISIBLE
 
-                }, 4000 // delay in milliseconds
+                }, 3000 // delay in milliseconds
             )
         }
 
 
         fun compareScores() {
             if (playerhand.score > 21 && dealerhand.score > 21 || playerhand.score == dealerhand.score) {
-                prompt.text = "DRAW"
+                prompt.text = "PUSH"
                 endOfRoundPrompt()
 
-            } else if ((playerhand.score <= 21 && dealerhand.score > 21)
-                || (playerhand.score > dealerhand.score && playerhand.score < 21)) {
+            } else if ((playerhand.score <= 21 && dealerhand.score > 21) || (playerhand.score > dealerhand.score && playerhand.score <= 21)) {
                 prompt.text = "YOU WIN"
                 endOfRoundPrompt()
 
@@ -135,10 +140,12 @@ class Game : AppCompatActivity() {
 
         fun dealersTurn() {
             var cardDrawIndex = 0
+            hitBtn.visibility = View.GONE
+            standBtn.visibility = View.GONE
             while (dealerhand.score < 17) {
                 dealerhand.draw(DeckOfCards[turn].cardValue)
                 dealerCards[cardDrawIndex].setImageResource(DeckOfCards[turn].cardImage)
-                dealerCards[cardDrawIndex].setVisibility(View.VISIBLE)
+                dealerCards[cardDrawIndex].visibility = View.VISIBLE
                 dealerScore.text = dealerhand.score.toString()
                 cardDrawIndex++
                 turn++
@@ -153,32 +160,39 @@ class Game : AppCompatActivity() {
                 1 -> {
                     playerhand.draw(DeckOfCards[turn].cardValue)
                     myCard3.setImageResource(DeckOfCards[turn].cardImage)
-                    myCard3.setVisibility(View.VISIBLE)
+                    myCard3.visibility = View.VISIBLE
                     myScore.text = playerhand.score.toString()
                 }
                 2 -> {
                     playerhand.draw(DeckOfCards[turn].cardValue)
                     myCard4.setImageResource(DeckOfCards[turn].cardImage)
-                    myCard4.setVisibility(View.VISIBLE)
+                    myCard4.visibility = View.VISIBLE
                     myScore.text = playerhand.score.toString()
                 }
                 3 -> {
                     playerhand.draw(DeckOfCards[turn].cardValue)
                     myCard5.setImageResource(DeckOfCards[turn].cardImage)
-                    myCard5.setVisibility(View.VISIBLE)
+                    myCard5.visibility = View.VISIBLE
                     myScore.text = playerhand.score.toString()
                 }
             }
             turn++
             if (playerhand.score >= 21) {
-                hitBtn.setVisibility(View.GONE)
-                standBtn.setVisibility(View.GONE)
-                dealersTurn()
+                hitBtn.visibility = View.GONE
+                standBtn.visibility = View.GONE
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        dealersTurn()
+                    }, 3000 // delay in milliseconds
+                )
+                if (playerhand.score > 21) {
+                    prompt.text = "BUST"
+                }
             }
         }
         standBtn.setOnClickListener() {
-            hitBtn.setVisibility(View.GONE)
-            standBtn.setVisibility(View.GONE)
+            hitBtn.visibility = View.GONE
+            standBtn.visibility = View.GONE
             dealersTurn()
         }
 
@@ -186,25 +200,34 @@ class Game : AppCompatActivity() {
 
         fun startRound() {
             roundCount.text = "Round: ${round.toString()}"
-            Handler(Looper.getMainLooper()).postDelayed(
-                {
-                    hitBtn.setVisibility(View.VISIBLE)
-                    standBtn.setVisibility(View.VISIBLE)
-                }, 1500 // delay in milliseconds
-            )
+
+            hitBtn.visibility = View.VISIBLE
+            standBtn.visibility = View.VISIBLE
+
             dealCards()
             if (playerhand.score == 21) {
                 prompt.text = "BLACKJACK!"
+                hitBtn.visibility = View.GONE
+                standBtn.visibility = View.GONE
                 Handler(Looper.getMainLooper()).postDelayed(
                     {
-                        hitBtn.setVisibility(View.GONE)
-                        standBtn.setVisibility(View.GONE)
                         prompt.text = " "
                         dealersTurn()
 
-                    }, 4000 // delay in milliseconds
+                    }, 3000 // delay in milliseconds
                 )
 
+            } else if (playerhand.score > 21) {
+                prompt.text = "BUST"
+                hitBtn.visibility = View.GONE
+                standBtn.visibility = View.GONE
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        prompt.text = " "
+                        dealersTurn()
+
+                    }, 3000 // delay in milliseconds
+                )
             }
 
         }
@@ -215,20 +238,42 @@ class Game : AppCompatActivity() {
             dealerhand.score = 0
             turn = 1
             for (c in dealerCards) {
-                c.setVisibility(View.INVISIBLE)
+                c.visibility = View.INVISIBLE
             }
             for (c in playerCards) {
-                c.setVisibility(View.INVISIBLE)
+                c.visibility = View.INVISIBLE
             }
+            dealercard2.setImageResource(R.drawable.carddesign)
+            dealercard2.visibility = View.VISIBLE
             round++
         }
 
         playAgain.setOnClickListener() {
             resetRound()
             startRound()
-            playAgain.setVisibility(View.GONE)
+            playAgain.visibility = View.GONE
+            betFragment.visibility = View.GONE
 
         }
 
+        betFragment.setOnClickListener() {
+            val betting = BettingFragment()
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.container, betting, "Bet")
+            transaction.commit()
+            hitBtn.visibility = View.GONE
+            standBtn.visibility = View.GONE
+            playAgain.visibility = View.GONE
+            betFragment.visibility = View.GONE
+        }
+
     }
+
+    fun showBtns() {
+        playAgain.visibility = View.VISIBLE
+        betFragment.visibility = View.VISIBLE
+
+    }
+
+
 }
