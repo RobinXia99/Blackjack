@@ -6,13 +6,15 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 
-open class Deck(var deckNum: Int) : Cards() {
+open class Deck() : Cards() {
 
 
     val DeckOfCards = mutableListOf<Cards>()
 
 
-    fun dealCards() {
+
+
+    fun createDeck() {
 
 
         var value = 2
@@ -35,24 +37,34 @@ open class Deck(var deckNum: Int) : Cards() {
             cardIndex++
 
         }
-        for (i in 0..51) {
+        /*for (i in 0..51) {
 
-            /*Log.d("Cards", "${DeckOfCards[i].cardValue}  ${DeckOfCards[i].cardImage}")
+            Log.d("Cards", "${DeckOfCards[i].cardValue}  ${DeckOfCards[i].cardImage}")
             //2,3,4,5,6,7,8,9,10,10,10,10,11 - 2,3,4,5,6,7,8,9,10,10,10,10,11 value loop
-            //1,2,3,4,5,6,7,8,9,10,11,12,13 - 14,15,16,17,18,19,20,21,22,23,24,25 card index*/
-        }
+            //1,2,3,4,5,6,7,8,9,10,11,12,13 - 14,15,16,17,18,19,20,21,22,23,24,25 card index
+        }*/
 
 
         DeckOfCards.shuffle()
 
     }
+    fun getNewCard() : Cards {
+        if (DeckOfCards.isEmpty()) {
+            createDeck()
+        }
+        val rnd = (0 until DeckOfCards.size).random()
+
+        val newCard = DeckOfCards.removeAt(rnd)
+        return newCard
+    }
+
 
 
 }
 
 open class Cards(var cardValue: Int = 0, var cardImage: Int = 0) {
 
-    companion object {
+
         var cardIMG = listOf(
             R.drawable.spades_2,
             R.drawable.spades_3,
@@ -107,7 +119,7 @@ open class Cards(var cardValue: Int = 0, var cardImage: Int = 0) {
             R.drawable.diamonds_king,
             R.drawable.diamonds_ace
         )
-    }
+
 
 }
 

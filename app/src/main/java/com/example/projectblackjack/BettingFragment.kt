@@ -38,57 +38,104 @@ class BettingFragment : Fragment() {
         chip1000 = view.findViewById(R.id.chip1000)
         betTextView = view.findViewById(R.id.betNum)
 
-        var everyOtherClick = 2
 
         //
 
-        // kelösjkl
         fun AddBet () {
             val gameActivity = activity as Game
-            if((gameActivity.purse.balance >= 0)
-                &&
-                (gameActivity.purse.balance >= chip.tag.toString().toInt())) {
 
-            if ((everyOtherClick % 2) == 0) {
+            if ((gameActivity.betAmount + chip.tag.toString().toInt() <= gameActivity.purse.balance)) {
                 gameActivity.betAmount += chip.tag.toString().toInt()
-                everyOtherClick++
-            } else {
-                gameActivity.betAmount -= chip.tag.toString().toInt()
-                everyOtherClick++
             }
-                }
+
             betTextView.text = gameActivity.betAmount.toString()
         }
+        fun removeBet () {
+            val gameActivity = activity as Game
+            if (gameActivity.betAmount >= chip.tag.toString().toInt()) {
+                gameActivity.betAmount -= chip.tag.toString().toInt()
+                betTextView.text = gameActivity.betAmount.toString()
+            }
+        }
 
+
+        var chip25Index = 2
         chip25.setOnClickListener() {
             chip = chip25
-            AddBet()
+            if(chip25Index % 2 == 0) {
+                AddBet()
+                chip25Index++
+            } else {
+                removeBet()
+                chip25Index++
+            }
         }
+        var chip50Index = 2
         chip50.setOnClickListener() {
             chip = chip50
-            AddBet()
+            if(chip50Index % 2 == 0) {
+                AddBet()
+                chip50Index++
+            } else {
+                removeBet()
+                chip50Index++
+            }
         }
+        var chip100Index = 2
         chip100.setOnClickListener() {
             chip = chip100
-            AddBet()
+            if(chip100Index % 2 == 0) {
+                AddBet()
+                chip100Index++
+            } else {
+                removeBet()
+                chip100Index++
+            }
         }
+        var chip200Index = 2
         chip200.setOnClickListener() {
             chip = chip200
-            AddBet()
+            if(chip200Index % 2 == 0) {
+                AddBet()
+                chip200Index++
+            } else {
+                removeBet()
+                chip200Index++
+            }
         }
+        var chip500Index = 2
         chip500.setOnClickListener() {
             chip = chip500
-            AddBet()
+            if(chip500Index % 2 == 0) {
+                AddBet()
+                chip500Index++
+            } else {
+                removeBet()
+                chip500Index++
+            }
         }
+        var chip1000Index = 2
         chip1000.setOnClickListener() {
             chip = chip1000
-            AddBet()
+            if(chip1000Index % 2 == 0) {
+                AddBet()
+                chip1000Index++
+            } else {
+                removeBet()
+                chip1000Index++
+            }
         }
 
             betBtn.setOnClickListener() {
-            val gameActivity = activity as Game
-            gameActivity.showBtns()
-            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+                val gameActivity = activity as Game
+                gameActivity.showBtns()
+                chip25Index = 2
+                chip50Index = 2
+                chip100Index = 2
+                chip200Index = 2
+                chip500Index = 2
+                chip1000Index = 2
+                activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
 
         }
 

@@ -27,17 +27,17 @@ class Menu : AppCompatActivity() {
         }
 
         rulesBtn.setOnClickListener() {
-            rulesDialog.setVisibility(View.VISIBLE)
-            dialogBtn.setVisibility(View.VISIBLE)
-            rulesBtn.setVisibility(View.GONE)
-            playBtn.setVisibility(View.GONE)
+            rulesDialog.visibility = View.VISIBLE
+            dialogBtn.visibility = View.VISIBLE
+            rulesBtn.visibility = View.GONE
+            playBtn.visibility = View.GONE
 
         }
         dialogBtn.setOnClickListener() {
-            rulesDialog.setVisibility(View.GONE)
-            dialogBtn.setVisibility(View.GONE)
-            rulesBtn.setVisibility(View.VISIBLE)
-            playBtn.setVisibility(View.VISIBLE)
+            rulesDialog.visibility = View.GONE
+            dialogBtn.visibility = View.GONE
+            rulesBtn.visibility = View.VISIBLE
+            playBtn.visibility = View.VISIBLE
 
 
         }
@@ -45,7 +45,7 @@ class Menu : AppCompatActivity() {
 
     }
 
-    private fun startGame () {
+    private fun startGame() {
         val intent = Intent(this, Game::class.java)
         startActivity(intent)
     }
