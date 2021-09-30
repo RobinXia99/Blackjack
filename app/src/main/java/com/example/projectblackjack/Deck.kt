@@ -49,9 +49,6 @@ open class Deck() : Cards() {
 
     }
     fun getNewCard() : Cards {
-        if (DeckOfCards.isEmpty()) {
-            createDeck()
-        }
         val rnd = (0 until DeckOfCards.size).random()
 
         val newCard = DeckOfCards.removeAt(rnd)
