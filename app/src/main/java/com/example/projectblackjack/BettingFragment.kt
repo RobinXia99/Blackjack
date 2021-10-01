@@ -28,7 +28,7 @@ class BettingFragment : Fragment() {
         lateinit var chip: ImageView
 
 
-        val view = inflater.inflate(R.layout.fragment_betting, container, false,)
+        val view = inflater.inflate(R.layout.fragment_betting, container, false)
         val betBtn = view.findViewById<Button>(R.id.betBtn)
         chip25 = view.findViewById(R.id.chip25)
         chip50 = view.findViewById(R.id.chip50)
@@ -39,30 +39,34 @@ class BettingFragment : Fragment() {
         betTextView = view.findViewById(R.id.betNum)
 
 
-        //
+        // Access's betAmount using getactivity and sets the bet depending on the bet
+        fun AddBet() {
+            val gameActivity = activity as Game_activity
 
-        fun AddBet () {
-            val gameActivity = activity as Game
-
-            if ((gameActivity.betAmount + chip.tag.toString().toInt() <= gameActivity.purse.balance)) {
+            if ((gameActivity.betAmount + chip.tag.toString()
+                    .toInt() <= gameActivity.purse.balance)
+            ) {
                 gameActivity.betAmount += chip.tag.toString().toInt()
             }
 
             betTextView.text = gameActivity.betAmount.toString()
         }
-        fun removeBet () {
-            val gameActivity = activity as Game
+
+        /* Removes the bet if the bet is bigger or same as the chip selected. This is used to disselect
+         the chip when clicked the second time. */
+        fun removeBet() {
+            val gameActivity = activity as Game_activity
             if (gameActivity.betAmount >= chip.tag.toString().toInt()) {
                 gameActivity.betAmount -= chip.tag.toString().toInt()
                 betTextView.text = gameActivity.betAmount.toString()
             }
         }
 
-
+        // Every even click adds the bet and odd clicks removes the bet.
         var chip25Index = 2
         chip25.setOnClickListener() {
             chip = chip25
-            if(chip25Index % 2 == 0) {
+            if (chip25Index % 2 == 0) {
                 AddBet()
                 chip25Index++
             } else {
@@ -73,7 +77,7 @@ class BettingFragment : Fragment() {
         var chip50Index = 2
         chip50.setOnClickListener() {
             chip = chip50
-            if(chip50Index % 2 == 0) {
+            if (chip50Index % 2 == 0) {
                 AddBet()
                 chip50Index++
             } else {
@@ -84,7 +88,7 @@ class BettingFragment : Fragment() {
         var chip100Index = 2
         chip100.setOnClickListener() {
             chip = chip100
-            if(chip100Index % 2 == 0) {
+            if (chip100Index % 2 == 0) {
                 AddBet()
                 chip100Index++
             } else {
@@ -95,7 +99,7 @@ class BettingFragment : Fragment() {
         var chip200Index = 2
         chip200.setOnClickListener() {
             chip = chip200
-            if(chip200Index % 2 == 0) {
+            if (chip200Index % 2 == 0) {
                 AddBet()
                 chip200Index++
             } else {
@@ -106,7 +110,7 @@ class BettingFragment : Fragment() {
         var chip500Index = 2
         chip500.setOnClickListener() {
             chip = chip500
-            if(chip500Index % 2 == 0) {
+            if (chip500Index % 2 == 0) {
                 AddBet()
                 chip500Index++
             } else {
@@ -117,7 +121,7 @@ class BettingFragment : Fragment() {
         var chip1000Index = 2
         chip1000.setOnClickListener() {
             chip = chip1000
-            if(chip1000Index % 2 == 0) {
+            if (chip1000Index % 2 == 0) {
                 AddBet()
                 chip1000Index++
             } else {
@@ -125,17 +129,17 @@ class BettingFragment : Fragment() {
                 chip1000Index++
             }
         }
-
-            betBtn.setOnClickListener() {
-                val gameActivity = activity as Game
-                gameActivity.showBtns()
-                chip25Index = 2
-                chip50Index = 2
-                chip100Index = 2
-                chip200Index = 2
-                chip500Index = 2
-                chip1000Index = 2
-                activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+        // Calls the showBtns function on Game_activity and resets the chip-click index's to 2.
+        betBtn.setOnClickListener() {
+            val gameActivity = activity as Game_activity
+            gameActivity.showBtns()
+            chip25Index = 2
+            chip50Index = 2
+            chip100Index = 2
+            chip200Index = 2
+            chip500Index = 2
+            chip1000Index = 2
+            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
 
         }
 
@@ -143,7 +147,6 @@ class BettingFragment : Fragment() {
 
 
     }
-
 
 
 }

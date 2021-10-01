@@ -12,7 +12,8 @@ open class Hand(var score: Int = 0) : Cards() {
 }
 
 class DealerHand : Hand() {
-
+    /* draws a card from DeckOfCards, adds the cardvalue to score and stores it in HandOfCards.
+    Checks if score is over 21, in which case the Ace will be counted as 1.*/
     override fun draw(card: Cards) {
         score += card.cardValue
         HandOfCards.add(card)

@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectBlackjack">
         <activity
-            android:name=".Game"
+            android:name=".Game_activity"
             android:exported="true" />
         <activity
-            android:name=".Menu"
+            android:name=".Menu_activity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

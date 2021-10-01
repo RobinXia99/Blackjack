@@ -9,11 +9,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
 
-class Menu : AppCompatActivity() {
+class Menu_activity : AppCompatActivity() {
 
 
     var mediaPlayer: MediaPlayer? = null
@@ -57,7 +54,7 @@ class Menu : AppCompatActivity() {
         mediaPlayer!!.start()
 
         //If music is playing, music pauses. Else music resumes and image changes.
-        sound.setOnClickListener(){
+        sound.setOnClickListener() {
             if (mediaPlayer != null && mediaPlayer!!.isPlaying) {
                 mediaPlayer!!.pause()
                 sound.setImageResource(R.drawable.soundoff)
@@ -70,7 +67,7 @@ class Menu : AppCompatActivity() {
         playBtn.setOnClickListener() {
             startGame()
         }
-
+        // Opens the rule window
         rulesBtn.setOnClickListener() {
             rulesDialog.visibility = View.VISIBLE
             dialogBtn.visibility = View.VISIBLE
@@ -78,6 +75,7 @@ class Menu : AppCompatActivity() {
             playBtn.visibility = View.GONE
 
         }
+        // Closes the rule window
         dialogBtn.setOnClickListener() {
             rulesDialog.visibility = View.GONE
             dialogBtn.visibility = View.GONE
@@ -86,6 +84,7 @@ class Menu : AppCompatActivity() {
 
 
         }
+        // Opens the highscore window
         scoreBtn.setOnClickListener() {
             highscoreDialog.visibility = View.VISIBLE
             closeBtn.visibility = View.VISIBLE
@@ -101,8 +100,8 @@ class Menu : AppCompatActivity() {
             lbScore3.visibility = View.VISIBLE
 
 
-
         }
+        // Closes the highscore window
         closeBtn.setOnClickListener() {
             highscoreDialog.visibility = View.GONE
             closeBtn.visibility = View.GONE
@@ -118,17 +117,18 @@ class Menu : AppCompatActivity() {
         }
 
 
-
     }
 
+    // Starts game_activity.
     private fun startGame() {
-        val intent = Intent(this, Game::class.java)
+        val intent = Intent(this, Game_activity::class.java)
         mediaPlayer!!.pause()
         sound.setImageResource(R.drawable.soundoff)
 
         startActivity(intent)
     }
 
+    // OnResume, sharedpreferences are retrieved to set the highscores.
     override fun onResume() {
         super.onResume()
 
@@ -145,15 +145,9 @@ class Menu : AppCompatActivity() {
         lbName.text = name
         lbName2.text = name2
         lbName3.text = name3
-        lbScore.text = score.toString() +"$"
-        lbScore2.text = score2.toString() +"$"
-        lbScore3.text = score3.toString() +"$"
-
-
-
-
-
-
+        lbScore.text = score.toString() + "$"
+        lbScore2.text = score2.toString() + "$"
+        lbScore3.text = score3.toString() + "$"
 
 
     }

@@ -7,15 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.graphics.drawable.toDrawable
 
-class Game : AppCompatActivity() {
+class Game_activity : AppCompatActivity() {
 
     var mediaPlayer: MediaPlayer? = null
     private lateinit var myScore: TextView
@@ -50,6 +48,7 @@ class Game : AppCompatActivity() {
     val playerhand: Hand = PlayerHand() // My score
     val DeckOfCards = Deck()
     var newCard = Cards()
+
 
     val HandOfCards = mutableListOf<Cards>()
 
@@ -87,37 +86,15 @@ class Game : AppCompatActivity() {
 //--------------------------------------------------
         startGame()
 //--------------------------------------------------
-        
+
         /* Draws a card depending on what turn it is. Sets the new image and makes the card visible
         * My turn ends when I either hit 21 or more. I can draw 4 cards max after
         * my first 2 because the probability of getting a bad score with 6 cards is very low.  */
         hitBtn.setOnClickListener() {
             when (turn) {
-                1 -> {
-                    playerhand.draw(getCard())
-                    myCard3.setImageResource(newCard.cardImage)
-                    myCard3.visibility = View.VISIBLE
-                    myScore.text = playerhand.score.toString()
+                turn -> {
+                    hit()
                 }
-                2 -> {
-                    playerhand.draw(getCard())
-                    myCard4.setImageResource(newCard.cardImage)
-                    myCard4.visibility = View.VISIBLE
-                    myScore.text = playerhand.score.toString()
-                }
-                3 -> {
-                    playerhand.draw(getCard())
-                    myCard5.setImageResource(newCard.cardImage)
-                    myCard5.visibility = View.VISIBLE
-                    myScore.text = playerhand.score.toString()
-                }
-                4 -> {
-                    playerhand.draw(getCard())
-                    myCard6.setImageResource(newCard.cardImage)
-                    myCard6.visibility = View.VISIBLE
-                    myScore.text = playerhand.score.toString()
-                }
-
 
             }
             turn++
@@ -127,7 +104,7 @@ class Game : AppCompatActivity() {
                 Handler(Looper.getMainLooper()).postDelayed(
                     {
                         dealersTurn()
-                    }, 3000 // delay in milliseconds
+                    }, 2000 // delay in milliseconds
                 )
                 if (playerhand.score > 21) {
                     prompt.text = "BUST"
@@ -143,7 +120,7 @@ class Game : AppCompatActivity() {
         // Subtracts my bet from my balance, resets the round and resumes the game.
         playAgain.setOnClickListener() {
             purse.balance -= betAmount
-            if(purse.balance > 0) {
+            if (purse.balance > 0) {
                 mediaPlayer = MediaPlayer.create(this, R.raw.losemoney)
                 mediaPlayer!!.start()
             }
@@ -168,14 +145,16 @@ class Game : AppCompatActivity() {
             cashoutBtn.visibility = View.GONE
             betAmount = 0
         }
+        // Asks for your name and submits your name and score to the highscore list.
         cashoutBtn.setOnClickListener() {
             playAgain.visibility = View.GONE
             betFragment.visibility = View.GONE
             cashoutName.visibility = View.VISIBLE
             confirmName.visibility = View.VISIBLE
         }
+        // Runs the saveScore function and navigates to menu activity.
         confirmName.setOnClickListener() {
-            val intent = Intent(this,Menu::class.java)
+            val intent = Intent(this, Menu_activity::class.java)
             saveScore()
 
             startActivity(intent)
@@ -183,6 +162,10 @@ class Game : AppCompatActivity() {
 
     }
 
+    /* Creates a SharePreference object that stores key-values that you can edit, put and get.
+    * Getting a highscore pushes the current highscore to 2nd place and so on. The values are permanently
+    * stored after using apply(). edit.apply() will clear the object.
+    * */
     fun saveScore() {
         val sharedPref = getSharedPreferences("highScore", Context.MODE_PRIVATE)
         val edit = sharedPref.edit()
@@ -192,25 +175,27 @@ class Game : AppCompatActivity() {
         val score2 = sharedPref.getInt("score2", 0)
         val name3 = sharedPref.getString("name3", "---")
         val score3 = sharedPref.getInt("score3", 0)
-        if(purse.balance > score ) {
-            edit.putString("name2",name)
-            edit.putInt("score2",score)
+        if (purse.balance > score) {
+            edit.putString("name2", name)
+            edit.putInt("score2", score)
             edit.putString("name", cashoutName.text.toString())
             edit.putInt("score", purse.balance)
 
-        } else if(purse.balance in (score2 + 1) until score) {
-            edit.putString("name3",name2)
-            edit.putInt("score3",score2)
+        } else if (purse.balance in (score2 + 1) until score) {
+            edit.putString("name3", name2)
+            edit.putInt("score3", score2)
             edit.putString("name2", cashoutName.text.toString())
             edit.putInt("score2", purse.balance)
-        } else if(purse.balance in (score3 + 1) until score2) {
-            edit.putString("name3",cashoutName.text.toString())
-            edit.putInt("score3",purse.balance)
+        } else if (purse.balance in (score3 + 1) until score2) {
+            edit.putString("name3", cashoutName.text.toString())
+            edit.putInt("score3", purse.balance)
         }
 
         edit.apply()
     }
 
+    /* Starts the game by setting the round and balance. Then calls the dealCard function.
+    * If the first cards dealt adds up to 21, the round ends and dealer begins to draw cards. */
     fun startGame() {
         roundCount.text = "Round: ${round}"
         balanceCount.text = "Balance: ${purse.balance}$"
@@ -235,44 +220,49 @@ class Game : AppCompatActivity() {
 
     }
 
+    /* DeckOfCards.createDeck() creates and shuffles the deck inside the Deck class.
+    * .draw() calls the draw function inside the Hand class. It takes the value of getCard()
+    * which returns a Card object and adds it to HandOfCards.*/
     fun dealCards() {
 
         DeckOfCards.createDeck()
 
 
-                playerhand.draw(getCard())
-                myCard1.setImageResource(newCard.cardImage)
-                playerhand.draw(getCard())
-                myCard2.setImageResource(newCard.cardImage)
-                myScore.text = playerhand.score.toString()
+        playerhand.draw(getCard())
+        myCard1.setImageResource(newCard.cardImage)
+        playerhand.draw(getCard())
+        myCard2.setImageResource(newCard.cardImage)
+        myScore.text = playerhand.score.toString()
 
-                dealerhand.draw(getCard())
-                dealercard1.setImageResource(newCard.cardImage)
-                dealerScore.text = dealerhand.score.toString()
+        dealerhand.draw(getCard())
+        dealercard1.setImageResource(newCard.cardImage)
+        dealerScore.text = dealerhand.score.toString()
 
     }
 
+    /* dealersTurn is called after players turn is over. If player busted, the round is automatically over
+    and compareScores is called.*/
     fun dealersTurn() {
         val dealerCards = arrayOf(dealercard2, dealercard3, dealercard4, dealercard5, dealercard6)
         var cardDrawIndex = 0
         hitBtn.visibility = View.GONE
         standBtn.visibility = View.GONE
         if (playerhand.score <= 21) {
-        while (dealerhand.score < 17) {
-            dealerhand.draw(getCard())
-            dealerCards[cardDrawIndex].setImageResource(newCard.cardImage)
-            dealerCards[cardDrawIndex].visibility = View.VISIBLE
-            dealerScore.text = dealerhand.score.toString()
-            cardDrawIndex++
-            turn++
+            while (dealerhand.score < 17) {
+                dealerhand.draw(getCard())
+                dealerCards[cardDrawIndex].setImageResource(newCard.cardImage)
+                dealerCards[cardDrawIndex].visibility = View.VISIBLE
+                dealerScore.text = dealerhand.score.toString()
+                cardDrawIndex++
+            }
         }
+
+        compareScores()
+
+
     }
 
-            compareScores()
-
-
-    }
-
+    /* Compares the score of dealer and player, displays WIN, LOSE or PUSH depending on condition. */
     fun compareScores() {
         if (playerhand.score > 21 && dealerhand.score > 21 || playerhand.score == dealerhand.score) {
             prompt.text = "PUSH"
@@ -300,6 +290,8 @@ class Game : AppCompatActivity() {
         }
     }
 
+    /* endOfRoundPrompt is called after the scored are compared. It increments the round value and shows
+    * additional buttons. */
     fun endOfRoundPrompt() {
         Handler(Looper.getMainLooper()).postDelayed(
             {
@@ -310,11 +302,11 @@ class Game : AppCompatActivity() {
                 round++
                 roundCount.text = "Round: ${round}"
 
-            }, 3000 // delay in milliseconds
+            }, 2000 // delay in milliseconds
         )
     }
 
-
+    // Round is reset. Every card is turned upside down or made invisible and hands are cleared.
     fun resetRound() {
         val dealerCards = arrayOf(dealercard3, dealercard4, dealercard5, dealercard6)
         val playerCards = arrayOf(myCard3, myCard4, myCard5, myCard6)
@@ -332,15 +324,29 @@ class Game : AppCompatActivity() {
         dealerhand.HandOfCards.clear()
     }
 
+    /* Calls the getNewCard function that returns a card from DeckOfCards and applies it to newCard.
+    newCard is then added to HandOfCards. */
     fun getCard(): Cards {
         newCard = DeckOfCards.getNewCard()
         HandOfCards.add(newCard)
         return newCard
     }
 
+    // Shows the buttons again after returning from betting fragment.
     fun showBtns() {
         playAgain.visibility = View.VISIBLE
         betFragment.visibility = View.VISIBLE
+    }
+    // Used by hitBtn. Draws a card and sets the different cards image depending on turn.
+    fun hit () {
+        val playerCards = arrayOf(myCard3, myCard4, myCard5, myCard6)
+        playerhand.draw(getCard())
+        playerCards[turn-1].setImageResource(newCard.cardImage)
+        playerCards[turn-1].visibility = View.VISIBLE
+        myScore.text = playerhand.score.toString()
+
+
+
     }
 
 
