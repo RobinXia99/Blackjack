@@ -180,13 +180,15 @@ class Game_activity : AppCompatActivity() {
             edit.putInt("score2", score)
             edit.putString("name", cashoutName.text.toString())
             edit.putInt("score", purse.balance)
+            edit.putString("name3", name2)
+            edit.putInt("score3", score2)
 
-        } else if (purse.balance in (score2 + 1) until score) {
+        } else if (purse.balance in (score2 + 1)..score) {
             edit.putString("name3", name2)
             edit.putInt("score3", score2)
             edit.putString("name2", cashoutName.text.toString())
             edit.putInt("score2", purse.balance)
-        } else if (purse.balance in (score3 + 1) until score2) {
+        } else if (purse.balance in (score3 + 1)..score2) {
             edit.putString("name3", cashoutName.text.toString())
             edit.putInt("score3", purse.balance)
         }

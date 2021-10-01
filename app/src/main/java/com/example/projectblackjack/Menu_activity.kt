@@ -150,6 +150,7 @@ class Menu_activity : AppCompatActivity() {
         lbScore3.text = score3.toString() + "$"
 
 
+
     }
 
 }
