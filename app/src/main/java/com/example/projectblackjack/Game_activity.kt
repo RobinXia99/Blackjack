@@ -12,8 +12,17 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class Game_activity : AppCompatActivity() {
+class Game_activity : AppCompatActivity(), CoroutineScope {
+
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     var mediaPlayer: MediaPlayer? = null
     private lateinit var myScore: TextView
@@ -49,6 +58,8 @@ class Game_activity : AppCompatActivity() {
     val DeckOfCards = Deck()
     var newCard = Cards()
 
+    lateinit var db: AppDatabase
+
 
     val HandOfCards = mutableListOf<Cards>()
 
@@ -56,6 +67,8 @@ class Game_activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        job= Job()
 
 
         myCard1 = findViewById(R.id.mycard1)
@@ -82,6 +95,7 @@ class Game_activity : AppCompatActivity() {
         roundCount = findViewById(R.id.roundView)
         balanceCount = findViewById(R.id.balanceView)
         cashoutName = findViewById(R.id.cashoutName)
+        db = AppDatabase.getInstance(this)
 
 //--------------------------------------------------
         startGame()
@@ -154,8 +168,10 @@ class Game_activity : AppCompatActivity() {
         }
         // Runs the saveScore function and navigates to menu activity.
         confirmName.setOnClickListener() {
+
+            val highscore = Highscore(0,cashoutName.text.toString(),purse.balance)
             val intent = Intent(this, Menu_activity::class.java)
-            saveScore()
+            saveScore(highscore)
 
             startActivity(intent)
         }
@@ -166,34 +182,12 @@ class Game_activity : AppCompatActivity() {
     * Getting a highscore pushes the current highscore to 2nd place and so on. The values are permanently
     * stored after using apply(). edit.apply() will clear the object.
     * */
-    fun saveScore() {
-        val sharedPref = getSharedPreferences("highScore", Context.MODE_PRIVATE)
-        val edit = sharedPref.edit()
-        val name = sharedPref.getString("name", "---")
-        val score = sharedPref.getInt("score", 0)
-        val name2 = sharedPref.getString("name2", "---")
-        val score2 = sharedPref.getInt("score2", 0)
-        val name3 = sharedPref.getString("name3", "---")
-        val score3 = sharedPref.getInt("score3", 0)
-        if (purse.balance > score) {
-            edit.putString("name2", name)
-            edit.putInt("score2", score)
-            edit.putString("name", cashoutName.text.toString())
-            edit.putInt("score", purse.balance)
-            edit.putString("name3", name2)
-            edit.putInt("score3", score2)
+    fun saveScore(highscore: Highscore) {
 
-        } else if (purse.balance in (score2 + 1)..score) {
-            edit.putString("name3", name2)
-            edit.putInt("score3", score2)
-            edit.putString("name2", cashoutName.text.toString())
-            edit.putInt("score2", purse.balance)
-        } else if (purse.balance in (score3 + 1)..score2) {
-            edit.putString("name3", cashoutName.text.toString())
-            edit.putInt("score3", purse.balance)
+        launch(Dispatchers.IO) {
+            db.highscoreDao.insert(highscore)
         }
 
-        edit.apply()
     }
 
     /* Starts the game by setting the round and balance. Then calls the dealCard function.

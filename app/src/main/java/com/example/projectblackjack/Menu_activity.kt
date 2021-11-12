@@ -5,24 +5,31 @@ import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class Menu_activity : AppCompatActivity() {
+class Menu_activity : AppCompatActivity(), CoroutineScope {
+
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
 
+    lateinit var db: AppDatabase
     var mediaPlayer: MediaPlayer? = null
     lateinit var sound: ImageView
     lateinit var rulesDialog: ImageView
-    lateinit var highscoreDialog: ImageView
-    lateinit var lbName: TextView
-    lateinit var lbName2: TextView
-    lateinit var lbName3: TextView
-    lateinit var lbScore: TextView
-    lateinit var lbScore2: TextView
-    lateinit var lbScore3: TextView
+    lateinit var highscoreView: CardView
+    var listOfHighscores = mutableListOf<Highscore>()
+    lateinit var recyclerView: RecyclerView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,21 +37,24 @@ class Menu_activity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+        job = Job()
+        db = AppDatabase.getInstance(this)
+
         val rulesBtn = findViewById<Button>(R.id.rulesBtn)
         val playBtn = findViewById<Button>(R.id.playBtn)
         val dialogBtn = findViewById<Button>(R.id.dialogBtn)
         val scoreBtn = findViewById<Button>(R.id.scoreBtn)
         val closeBtn = findViewById<Button>(R.id.closeBtn)
-        lbName = findViewById(R.id.nameView)
-        lbName2 = findViewById(R.id.nameView2)
-        lbName3 = findViewById(R.id.nameView3)
-        lbScore = findViewById(R.id.scoreView)
-        lbScore2 = findViewById(R.id.scoreView2)
-        lbScore3 = findViewById(R.id.scoreView3)
+        highscoreView = findViewById(R.id.highscoreView)
+
+        recyclerView = findViewById(R.id.recyclerView)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        recyclerView.adapter = HighscoreAdapter(this, listOfHighscores)
 
         rulesDialog = findViewById(R.id.rulesDialog)
         sound = findViewById(R.id.sound)
-        highscoreDialog = findViewById(R.id.highscoreView)
 
 
         /*Music created. Music is looping. Music started.
@@ -86,38 +96,29 @@ class Menu_activity : AppCompatActivity() {
         }
         // Opens the highscore window
         scoreBtn.setOnClickListener() {
-            highscoreDialog.visibility = View.VISIBLE
-            closeBtn.visibility = View.VISIBLE
 
+            closeBtn.visibility = View.VISIBLE
             rulesBtn.visibility = View.GONE
             playBtn.visibility = View.GONE
             scoreBtn.visibility = View.GONE
-            lbName.visibility = View.VISIBLE
-            lbName2.visibility = View.VISIBLE
-            lbName3.visibility = View.VISIBLE
-            lbScore.visibility = View.VISIBLE
-            lbScore2.visibility = View.VISIBLE
-            lbScore3.visibility = View.VISIBLE
+            highscoreView.visibility = View.VISIBLE
+
 
 
         }
         // Closes the highscore window
         closeBtn.setOnClickListener() {
-            highscoreDialog.visibility = View.GONE
+            highscoreView.visibility = View.GONE
             closeBtn.visibility = View.GONE
             rulesBtn.visibility = View.VISIBLE
             playBtn.visibility = View.VISIBLE
             scoreBtn.visibility = View.VISIBLE
-            lbName.visibility = View.GONE
-            lbName2.visibility = View.GONE
-            lbName3.visibility = View.GONE
-            lbScore.visibility = View.GONE
-            lbScore2.visibility = View.GONE
-            lbScore3.visibility = View.GONE
+
         }
 
 
     }
+
 
     // Starts game_activity.
     private fun startGame() {
@@ -128,29 +129,41 @@ class Menu_activity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    // OnResume, sharedpreferences are retrieved to set the highscores.
-    override fun onResume() {
-        super.onResume()
+
+    override fun onStart() {
+        super.onStart()
 
         mediaPlayer!!.start()
         sound.setImageResource(R.drawable.sound)
-        val sharedPref = getSharedPreferences("highScore", Context.MODE_PRIVATE)
-        val name = sharedPref.getString("name", "---")
-        val score = sharedPref.getInt("score", 0)
-        val name2 = sharedPref.getString("name2", "---")
-        val score2 = sharedPref.getInt("score2", 0)
-        val name3 = sharedPref.getString("name3", "---")
-        val score3 = sharedPref.getInt("score3", 0)
-
-        lbName.text = name
-        lbName2.text = name2
-        lbName3.text = name3
-        lbScore.text = score.toString() + "$"
-        lbScore2.text = score2.toString() + "$"
-        lbScore3.text = score3.toString() + "$"
+        
+        getHighscores()
 
 
 
     }
+
+    fun getHighscores() {
+        val highscores = async(Dispatchers.IO) {
+            db.highscoreDao.getAll()
+        }
+        launch {
+            val list = highscores.await().toMutableList()
+
+            for(i in list) {
+                listOfHighscores.add(i)
+            }
+
+            listOfHighscores.sortByDescending { it.score }
+            var position = 1
+
+            for (score in listOfHighscores) {
+                score.position = position
+                position++
+            }
+
+        }
+
+    }
+
 
 }
