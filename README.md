@@ -1,5 +1,3 @@
 # Blackjack
 
-The project is now finished.
-
-I will however build on it more in the future as I progress in coding and android studio.
+Simple Blackjack Card Game written in Kotlin. With Betting Chips and Highscore list(Local).
